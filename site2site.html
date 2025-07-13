@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Site-to-Site VPN Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .network-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            height: 400px;
+            margin: 40px 0;
+        }
+
+        .network-site {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            width: 280px;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .network-site:hover {
+            transform: translateY(-5px);
+        }
+
+        .on-premises {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        .azure-cloud {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .site-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .on-premises .site-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .azure-cloud .site-icon {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+        }
+
+        .site-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .site-details {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .vpn-tunnel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 60px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .tunnel-content {
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1em;
+            z-index: 2;
+        }
+
+        .data-flow {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #00ff88, #0088ff);
+            border-radius: 50%;
+            animation: dataFlow 3s infinite linear;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+        }
+
+        @keyframes dataFlow {
+            0% {
+                left: -30px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: 310px;
+                opacity: 0;
+            }
+        }
+
+        .security-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, #0078d4, #00bcf2, #0078d4);
+            background-size: 200% 100%;
+            animation: connectionFlow 2s infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(0, 120, 212, 0.5);
+        }
+
+        .left-line {
+            left: 280px;
+            top: 50%;
+            width: 150px;
+            transform: translateY(-50%);
+        }
+
+        .right-line {
+            right: 280px;
+            top: 50%;
+            width: 150px;
+            transform: translateY(-50%);
+        }
+
+        @keyframes connectionFlow {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-title {
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00bcf2;
+        }
+
+        .info-item h4 {
+            color: white;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .info-item p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: statusBlink 1.5s infinite;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-text {
+            color: white;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .network-diagram {
+                flex-direction: column;
+                height: auto;
+                gap: 30px;
+            }
+            
+            .vpn-tunnel {
+                position: static;
+                transform: none;
+                width: 200px;
+                height: 40px;
+            }
+            
+            .connection-line {
+                display: none;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .network-site {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Azure Site-to-Site VPN</h1>
+        
+        <div class="network-diagram">
+            <div class="network-site on-premises">
+                <div class="site-icon">🏢</div>
+                <div class="site-title">On-Premises</div>
+                <div class="site-details">
+                    <p>Corporate Network</p>
+                    <p>IP: 10.0.0.0/16</p>
+                    <p>VPN Gateway</p>
+                    <p>Firewall Protected</p>
+                </div>
+            </div>
+            
+            <div class="connection-line left-line"></div>
+            
+            <div class="vpn-tunnel">
+                <div class="security-badge">IPSec</div>
+                <div class="tunnel-content">Encrypted Tunnel</div>
+                <div class="data-flow"></div>
+                <div class="data-flow" style="animation-delay: 1s;"></div>
+                <div class="data-flow" style="animation-delay: 2s;"></div>
+            </div>
+            
+            <div class="connection-line right-line"></div>
+            
+            <div class="network-site azure-cloud">
+                <div class="site-icon">☁️</div>
+                <div class="site-title">Azure Cloud</div>
+                <div class="site-details">
+                    <p>Virtual Network</p>
+                    <p>IP: 192.168.0.0/16</p>
+                    <p>VPN Gateway</p>
+                    <p>Azure Resources</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <div class="status-text">Connection Active</div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-title">VPN Connection Details</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>🔐 Security</h4>
+                    <p>IPSec/IKE encryption with pre-shared keys or certificates for secure communication</p>
+                </div>
+                <div class="info-item">
+                    <h4>🌐 Routing</h4>
+                    <p>Static or dynamic routing (BGP) to exchange network topology information</p>
+                </div>
+                <div class="info-item">
+                    <h4>⚡ Performance</h4>
+                    <p>Bandwidth depends on gateway SKU - from 100 Mbps to 10 Gbps</p>
+                </div>
+                <div class="info-item">
+                    <h4>🔄 Redundancy</h4>
+                    <p>Active-standby or active-active configuration for high availability</p>
+                </div>
+                <div class="info-item">
+                    <h4>💰 Cost</h4>
+                    <p>Pay for VPN Gateway compute hours and data transfer</p>
+                </div>
+                <div class="info-item">
+                    <h4>📊 Monitoring</h4>
+                    <p>Azure Monitor, Network Watcher, and connection health diagnostics</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
