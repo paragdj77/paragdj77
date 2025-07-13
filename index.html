@@ -6,24 +6,33 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #f2f2f2;
       padding: 20px;
     }
     .quiz-container {
-      background: white;
-      padding: 20px;
+      background: #fff;
+      padding: 25px;
       border-radius: 10px;
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
-    h2 { color: #0078D4; }
+    h2 {
+      color: #0078D4;
+    }
     .question {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
     .result {
-      margin-top: 20px;
+      margin-top: 25px;
       font-weight: bold;
+      font-size: 18px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 60%;
+      margin-bottom: 20px;
+      font-size: 16px;
     }
     button {
       background-color: #0078D4;
@@ -32,10 +41,10 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 16px;
     }
     button:hover {
-      background-color: #005ea6;
+      background-color: #005fa3;
     }
   </style>
 </head>
@@ -43,6 +52,9 @@
   <div class="quiz-container">
     <h2>Azure Policy Quiz</h2>
     <form id="quizForm">
+
+      <label for="username"><strong>Your Name:</strong></label><br>
+      <input type="text" id="username" name="username" required><br>
 
       <div class="question">
         <p><strong>1. What is the main purpose of Azure Policy?</strong></p>
@@ -86,7 +98,13 @@
 
   <script>
     function checkAnswers() {
-      const answers = {
+      const name = document.getElementById("username").value.trim();
+      if (name === "") {
+        alert("Please enter your name.");
+        return;
+      }
+
+      const correctAnswers = {
         q1: "b",
         q2: "b",
         q3: "b",
@@ -97,15 +115,15 @@
       let score = 0;
       const form = document.getElementById("quizForm");
 
-      for (let q in answers) {
+      for (let q in correctAnswers) {
         const selected = form[q].value;
-        if (selected === answers[q]) {
+        if (selected === correctAnswers[q]) {
           score++;
         }
       }
 
-      const result = document.getElementById("result");
-      result.innerHTML = `You scored <strong>${score}/5</strong> ${score === 5 ? "🎉 Great job!" : ""}`;
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `Hi <strong>${name}</strong>! You scored <strong>${score}/5</strong>. ${score === 5 ? "🎉 Excellent work!" : score >= 3 ? "👍 Good job!" : "📘 Keep learning!"}`;
     }
   </script>
 </body>
