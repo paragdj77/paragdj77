@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Azure Management Tools Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #0078D4;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .result {
+      margin-top: 25px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 60%;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #0078D4;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Azure Management Tools Quiz</h2>
+    <form id="quizForm">
+
+      <label for="username"><strong>Your Name:</strong></label><br>
+      <input type="text" id="username" name="username" required><br>
+
+      <div class="question">
+        <p><strong>1. Which tool provides a web-based interface to manage Azure resources?</strong></p>
+        <label><input type="radio" name="q1" value="a"> Azure CLI</label><br>
+        <label><input type="radio" name="q1" value="b"> Azure PowerShell</label><br>
+        <label><input type="radio" name="q1" value="c"> Azure Portal</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>2. Which tool is best suited for automation using JSON-based templates?</strong></p>
+        <label><input type="radio" name="q2" value="a"> Azure Portal</label><br>
+        <label><input type="radio" name="q2" value="b"> Azure Resource Manager (ARM) templates</label><br>
+        <label><input type="radio" name="q2" value="c"> Azure CLI</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>3. What is the primary scripting language used in Azure PowerShell?</strong></p>
+        <label><input type="radio" name="q3" value="a"> Python</label><br>
+        <label><input type="radio" name="q3" value="b"> PowerShell</label><br>
+        <label><input type="radio" name="q3" value="c"> Bash</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>4. Which Azure tool is cross-platform and can run in Bash shells?</strong></p>
+        <label><input type="radio" name="q4" value="a"> Azure PowerShell</label><br>
+        <label><input type="radio" name="q4" value="b"> Azure CLI</label><br>
+        <label><input type="radio" name="q4" value="c"> Azure Portal</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>5. What does ARM stand for in Azure?</strong></p>
+        <label><input type="radio" name="q5" value="a"> Azure Resource Metrics</label><br>
+        <label><input type="radio" name="q5" value="b"> Azure Role Manager</label><br>
+        <label><input type="radio" name="q5" value="c"> Azure Resource Manager</label><br>
+      </div>
+
+      <button type="button" onclick="checkAnswers()">Submit</button>
+      <div class="result" id="result"></div>
+    </form>
+  </div>
+
+  <script>
+    function checkAnswers() {
+      const name = document.getElementById("username").value.trim();
+      if (name === "") {
+        alert("Please enter your name.");
+        return;
+      }
+
+      const correctAnswers = {
+        q1: "c",
+        q2: "b",
+        q3: "b",
+        q4: "b",
+        q5: "c"
+      };
+
+      let score = 0;
+      const form = document.getElementById("quizForm");
+
+      for (let q in correctAnswers) {
+        const selected = form[q].value;
+        if (selected === correctAnswers[q]) {
+          score++;
+        }
+      }
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `Hi <strong>${name}</strong>! You scored <strong>${score}/5</strong>. ${score === 5 ? "🎉 Excellent work!" : score >= 3 ? "👍 Good job!" : "📘 Keep learning!"}`;
+    }
+  </script>
+</body>
+</html>
