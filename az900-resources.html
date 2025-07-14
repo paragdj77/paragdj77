@@ -13,7 +13,7 @@
       background: #fff;
       padding: 25px;
       border-radius: 10px;
-      max-width: 700px;
+      max-width: 750px;
       margin: auto;
       box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
@@ -56,39 +56,80 @@
       <label for="username"><strong>Your Name:</strong></label><br>
       <input type="text" id="username" name="username" required><br>
 
+      <!-- Original Questions -->
       <div class="question">
         <p><strong>1. Which tool provides a web-based interface to manage Azure resources?</strong></p>
+        <label><input type="radio" name="q1" value="c"> Azure Portal</label><br>
         <label><input type="radio" name="q1" value="a"> Azure CLI</label><br>
         <label><input type="radio" name="q1" value="b"> Azure PowerShell</label><br>
-        <label><input type="radio" name="q1" value="c"> Azure Portal</label><br>
       </div>
 
       <div class="question">
         <p><strong>2. Which tool is best suited for automation using JSON-based templates?</strong></p>
+        <label><input type="radio" name="q2" value="b"> ARM Templates</label><br>
         <label><input type="radio" name="q2" value="a"> Azure Portal</label><br>
-        <label><input type="radio" name="q2" value="b"> Azure Resource Manager (ARM) templates</label><br>
         <label><input type="radio" name="q2" value="c"> Azure CLI</label><br>
       </div>
 
       <div class="question">
         <p><strong>3. What is the primary scripting language used in Azure PowerShell?</strong></p>
-        <label><input type="radio" name="q3" value="a"> Python</label><br>
         <label><input type="radio" name="q3" value="b"> PowerShell</label><br>
+        <label><input type="radio" name="q3" value="a"> Python</label><br>
         <label><input type="radio" name="q3" value="c"> Bash</label><br>
       </div>
 
       <div class="question">
         <p><strong>4. Which Azure tool is cross-platform and can run in Bash shells?</strong></p>
-        <label><input type="radio" name="q4" value="a"> Azure PowerShell</label><br>
         <label><input type="radio" name="q4" value="b"> Azure CLI</label><br>
+        <label><input type="radio" name="q4" value="a"> Azure PowerShell</label><br>
         <label><input type="radio" name="q4" value="c"> Azure Portal</label><br>
       </div>
 
       <div class="question">
         <p><strong>5. What does ARM stand for in Azure?</strong></p>
+        <label><input type="radio" name="q5" value="c"> Azure Resource Manager</label><br>
         <label><input type="radio" name="q5" value="a"> Azure Resource Metrics</label><br>
         <label><input type="radio" name="q5" value="b"> Azure Role Manager</label><br>
-        <label><input type="radio" name="q5" value="c"> Azure Resource Manager</label><br>
+      </div>
+
+      <!-- New Questions -->
+      <div class="question">
+        <p><strong>6. You need to deploy a web application and its associated resources in a repeatable and consistent manner. Which Azure management tool is best suited for this task?</strong></p>
+        <label><input type="radio" name="q6" value="c"> ARM Templates</label><br>
+        <label><input type="radio" name="q6" value="a"> Azure Portal</label><br>
+        <label><input type="radio" name="q6" value="b"> Azure PowerShell</label><br>
+        <label><input type="radio" name="q6" value="d"> Azure CLI</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>7. An administrator needs to retrieve the public IP address of a VM using a command-line tool. Which tool should they use?</strong></p>
+        <label><input type="radio" name="q7" value="d"> Azure CLI</label><br>
+        <label><input type="radio" name="q7" value="a"> Azure Portal</label><br>
+        <label><input type="radio" name="q7" value="b"> Azure PowerShell</label><br>
+        <label><input type="radio" name="q7" value="c"> ARM templates</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>8. A team wants to automate the creation of a resource group and a virtual network but has limited coding experience. Which should they choose?</strong></p>
+        <label><input type="radio" name="q8" value="b"> Azure Logic Apps</label><br>
+        <label><input type="radio" name="q8" value="a"> Azure Functions</label><br>
+        <label><input type="radio" name="q8" value="c"> ARM templates</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>9. Which of the following statements is true regarding Azure Service Health?</strong></p>
+        <label><input type="radio" name="q9" value="a"> It provides info about planned maintenance for your Azure services.</label><br>
+        <label><input type="radio" name="q9" value="b"> It shows security vulnerabilities in Azure resources.</label><br>
+        <label><input type="radio" name="q9" value="c"> It monitors performance of resources.</label><br>
+        <label><input type="radio" name="q9" value="d"> It manages access control to resources.</label><br>
+      </div>
+
+      <div class="question">
+        <p><strong>10. You need to manage your Azure web app from your iPhone. Which two tools can you use? (Select both)</strong></p>
+        <label><input type="checkbox" name="q10" value="a"> Azure Portal</label><br>
+        <label><input type="checkbox" name="q10" value="b"> Azure PowerShell</label><br>
+        <label><input type="checkbox" name="q10" value="c"> Azure CLI</label><br>
+        <label><input type="checkbox" name="q10" value="d"> Azure Cloud Shell</label><br>
       </div>
 
       <button type="button" onclick="checkAnswers()">Submit</button>
@@ -109,7 +150,11 @@
         q2: "b",
         q3: "b",
         q4: "b",
-        q5: "c"
+        q5: "c",
+        q6: "c",
+        q7: "d",
+        q8: "b",
+        q9: "a"
       };
 
       let score = 0;
@@ -122,8 +167,14 @@
         }
       }
 
+      // Question 10: Multi-select (Azure Portal + Cloud Shell)
+      const q10_correct = ["a", "d"];
+      const selectedQ10 = [...form.querySelectorAll('input[name="q10"]:checked')].map(el => el.value).sort();
+      const isQ10Correct = JSON.stringify(selectedQ10) === JSON.stringify(q10_correct);
+      if (isQ10Correct) score++;
+
       const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = `Hi <strong>${name}</strong>! You scored <strong>${score}/5</strong>. ${score === 5 ? "🎉 Excellent work!" : score >= 3 ? "👍 Good job!" : "📘 Keep learning!"}`;
+      resultDiv.innerHTML = `Hi <strong>${name}</strong>! You scored <strong>${score}/10</strong>. ${score === 10 ? "🎉 Perfect!" : score >= 7 ? "👍 Well done!" : "📘 Keep practicing!"}`;
     }
   </script>
 </body>
