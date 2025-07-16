@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azure Live Pricing</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; margin: 0; }
+    header { background: #0078d4; color: white; padding: 1rem 2rem; text-align: center; }
+    main { max-width: 800px; margin: auto; padding: 2rem; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 2rem; border-radius: 8px; }
+    label, select { display: block; width: 100%; margin-top: 1rem; font-size: 1rem; padding: 0.5rem; }
+    table { width: 100%; margin-top: 2rem; border-collapse: collapse; }
+    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background-color: #0078d4; color: white; }
+    .home-link { margin-top: 2rem; text-align: center; }
+    .home-link a { color: #0078d4; text-decoration: none; font-weight: bold; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Azure Live Pricing</h1>
+  </header>
+  <main>
+    <label for="serviceSelect">Select Service Category:</label>
+    <select id="serviceSelect" onchange="loadFilters()">
+      <option value="">-- Select a service --</option>
+      <option value="Virtual Machines">Compute (VM)</option>
+      <option value="Storage">Storage</option>
+      <option value="Load Balancer">Load Balancer</option>
+      <option value="Virtual Network">Virtual Network</option>
+      <option value="VPN Gateway">VPN Gateway</option>
+      <option value="Azure Firewall">Firewall</option>
+      <option value="Disks">Managed Disks</option>
+      <option value="VM Scale Sets">VM Scale Sets</option>
+    </select>
+
+    <label for="regionSelect">Select Region:</label>
+    <select id="regionSelect">
+      <option value="">-- Select region --</option>
+      <option value="eastus">East US</option>
+      <option value="centralindia">Central India</option>
+      <option value="westeurope">West Europe</option>
+    </select>
+
+    <button onclick="fetchPrices()" style="margin-top: 1.5rem; padding: 0.75rem; background: #0078d4; color: white; border: none; border-radius: 4px; cursor: pointer;">Get Pricing</button>
+
+    <table id="pricingTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Meter Name</th>
+          <th>Region</th>
+          <th>Price (USD)</th>
+          <th>Unit</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="home-link">
+      <a href="https://paragdj77.github.io/paragdj77/">&#8592; Go to Home</a>
+    </div>
+  </main>
+
+  <script>
+    function loadFilters() {
+      document.getElementById('pricingTable').style.display = 'none';
+    }
+
+    async function fetchPrices() {
+      const service = document.getElementById('serviceSelect').value;
+      const region = document.getElementById('regionSelect').value;
+      const table = document.getElementById('pricingTable');
+      const tbody = table.querySelector('tbody');
+      tbody.innerHTML = '';
+
+      if (!service || !region) {
+        alert("Please select both service and region.");
+        return;
+      }
+
+      const encodedService = encodeURIComponent(service);
+      const encodedRegion = encodeURIComponent(region);
+      const url = `https://prices.azure.com/api/retail/prices?$filter=serviceName eq '${encodedService}' and armRegionName eq '${encodedRegion}'`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const items = data.Items.slice(0, 20); // show top 20 only for simplicity
+
+        items.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.productName}</td>
+            <td>${item.meterName}</td>
+            <td>${item.armRegionName}</td>
+            <td>${item.retailPrice}</td>
+            <td>${item.unitOfMeasure}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        table.style.display = 'table';
+      } catch (error) {
+        alert("Failed to fetch pricing data.");
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
