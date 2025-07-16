@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Azure Live Pricing</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Azure Live Pricing (Static Mode)</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; margin: 0; }
     header { background: #0078d4; color: white; padding: 1rem 2rem; text-align: center; }
@@ -18,31 +18,28 @@
 </head>
 <body>
   <header>
-    <h1>Azure Live Pricing</h1>
+    <h1>Azure Static Pricing Viewer</h1>
   </header>
   <main>
     <label for="serviceSelect">Select Service Category:</label>
-    <select id="serviceSelect" onchange="loadFilters()">
+    <select id="serviceSelect" onchange="loadPricing()">
       <option value="">-- Select a service --</option>
-      <option value="Virtual Machines">Compute (VM)</option>
-      <option value="Storage">Storage</option>
-      <option value="Load Balancer">Load Balancer</option>
-      <option value="Virtual Network">Virtual Network</option>
-      <option value="VPN Gateway">VPN Gateway</option>
-      <option value="Azure Firewall">Firewall</option>
-      <option value="Disks">Managed Disks</option>
-      <option value="VM Scale Sets">VM Scale Sets</option>
+      <option value="virtual-machines">Compute (VM)</option>
+      <option value="storage">Storage</option>
+      <option value="load-balancer">Load Balancer</option>
+      <option value="virtual-network">Virtual Network</option>
+      <option value="azure-firewall">Firewall</option>
+      <option value="disks">Managed Disks</option>
+      <option value="vm-scale-sets">VM Scale Sets</option>
     </select>
 
     <label for="regionSelect">Select Region:</label>
-    <select id="regionSelect">
+    <select id="regionSelect" onchange="loadPricing()">
       <option value="">-- Select region --</option>
       <option value="eastus">East US</option>
       <option value="centralindia">Central India</option>
       <option value="westeurope">West Europe</option>
     </select>
-
-    <button onclick="fetchPrices()" style="margin-top: 1.5rem; padding: 0.75rem; background: #0078d4; color: white; border: none; border-radius: 4px; cursor: pointer;">Get Pricing</button>
 
     <table id="pricingTable" style="display: none;">
       <thead>
@@ -63,11 +60,7 @@
   </main>
 
   <script>
-    function loadFilters() {
-      document.getElementById('pricingTable').style.display = 'none';
-    }
-
-    async function fetchPrices() {
+    async function loadPricing() {
       const service = document.getElementById('serviceSelect').value;
       const region = document.getElementById('regionSelect').value;
       const table = document.getElementById('pricingTable');
@@ -75,18 +68,17 @@
       tbody.innerHTML = '';
 
       if (!service || !region) {
-        alert("Please select both service and region.");
+        table.style.display = 'none';
         return;
       }
 
-      const encodedService = encodeURIComponent(service);
-      const encodedRegion = encodeURIComponent(region);
-      const url = `https://prices.azure.com/api/retail/prices?$filter=serviceName eq '${encodedService}' and armRegionName eq '${encodedRegion}'`;
+      const filename = `${service}-${region}.json`;
+      const filepath = `static/${filename}`;
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(filepath);
         const data = await response.json();
-        const items = data.Items.slice(0, 20); // show top 20 only for simplicity
+        const items = data.slice(0, 50); // show top 50 for now
 
         items.forEach(item => {
           const row = document.createElement('tr');
@@ -102,8 +94,9 @@
 
         table.style.display = 'table';
       } catch (error) {
-        alert("Failed to fetch pricing data.");
-        console.error(error);
+        console.error('Error loading pricing data:', error);
+        table.style.display = 'none';
+        alert(`Unable to load file: ${filepath}`);
       }
     }
   </script>
