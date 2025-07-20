@@ -1,87 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Azure VNet Subnet Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f9fc; }
-    h1 { color: #2c3e50; }
-    label, select, input { display: block; margin: 10px 0; }
-    .output { background: #fff; padding: 15px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    code { background: #eef; padding: 2px 6px; border-radius: 4px; }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #2c3e50; }
+    label, input, select, button { margin: 10px 0; display: block; }
+    #result { background: #f4f4f4; padding: 10px; border: 1px solid #ccc; margin-top: 20px; white-space: pre-line; }
   </style>
 </head>
 <body>
   <h1>Azure VNet Subnet Calculator</h1>
+  <p>Enter your desired address space and number of VMs to estimate required subnets including Bastion, Gateway, and Firewall.</p>
 
-  <label for="vnet">Enter VNet Address Space (CIDR):</label>
-  <input type="text" id="vnet" placeholder="e.g., 10.0.0.0/16">
+  <label for="vnet">VNet Address Space (e.g. 10.0.0.0/16):</label>
+  <input type="text" id="vnet" placeholder="10.0.0.0/16" />
 
-  <label for="vmCount">Number of VMs in subnet:</label>
-  <input type="number" id="vmCount" min="1" placeholder="e.g., 100">
+  <label for="vmCount">Number of VMs:</label>
+  <input type="number" id="vmCount" placeholder="e.g. 100" />
 
-  <label for="includeBastion">Include Azure Bastion Subnet?</label>
-  <select id="includeBastion">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-  </select>
-
-  <label for="includeFirewall">Include Azure Firewall Subnet?</label>
-  <select id="includeFirewall">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-  </select>
-
-  <label for="includeGateway">Include Gateway Subnet?</label>
-  <select id="includeGateway">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-  </select>
+  <label><input type="checkbox" id="includeBastion" /> Include Bastion Subnet</label>
+  <label><input type="checkbox" id="includeFirewall" /> Include Firewall Subnet</label>
+  <label><input type="checkbox" id="includeGateway" /> Include Gateway Subnet</label>
 
   <button onclick="calculateSubnets()">Calculate Subnets</button>
 
-  <div class="output" id="output"></div>
+  <div id="result"></div>
 
   <script>
-    function getCIDR(requiredIPs) {
-      const usableIPs = requiredIPs + 5; // include Azure reserves
-      for (let i = 32; i >= 0; i--) {
-        const size = Math.pow(2, 32 - i);
-        if (size >= usableIPs) return i;
-      }
-      return null;
+    function cidrFromHosts(hosts) {
+      let bits = 32;
+      while ((2 ** (32 - bits)) - 5 < hosts) bits--;
+      return bits;
     }
 
     function calculateSubnets() {
-      const vnetCIDR = document.getElementById("vnet").value;
-      const vmCount = parseInt(document.getElementById("vmCount").value);
-      const includeBastion = document.getElementById("includeBastion").value === "yes";
-      const includeFirewall = document.getElementById("includeFirewall").value === "yes";
-      const includeGateway = document.getElementById("includeGateway").value === "yes";
+      const vnet = document.getElementById('vnet').value.trim();
+      const vmCount = parseInt(document.getElementById('vmCount').value);
+      const includeBastion = document.getElementById('includeBastion').checked;
+      const includeFirewall = document.getElementById('includeFirewall').checked;
+      const includeGateway = document.getElementById('includeGateway').checked;
 
-      const output = document.getElementById("output");
-      if (!vnetCIDR || isNaN(vmCount) || vmCount <= 0) {
-        output.innerHTML = `<p style='color:red;'>Please enter a valid VNet CIDR and VM count.</p>`;
+      if (!vnet || isNaN(vmCount) || vmCount < 1) {
+        alert("Please enter valid VNet and VM count.");
         return;
       }
 
-      let result = `<h2>Suggested Subnets</h2><ul>`;
-      const vmCIDR = getCIDR(vmCount);
-      result += `<li><strong>VM Subnet:</strong> /${vmCIDR} (Supports at least ${vmCount} VMs)<br><em>Calculated by finding the closest subnet size that offers enough usable IPs for ${vmCount} VMs. Azure reserves 5 IPs per subnet, so we add that buffer.</em></li>`;
+      let [baseIP, vnetCidr] = vnet.split('/');
+      let subnets = [];
+      let subnetCounter = 0;
+
+      function nextSubnet(cidr) {
+        let newSubnet = baseIP.split('.');
+        newSubnet[2] = parseInt(newSubnet[2]) + subnetCounter;
+        subnetCounter++;
+        return `${newSubnet.join('.').replace(/\.\d+$/, '.0')}/${cidr}`;
+      }
+
+      // VM Subnet
+      const totalIPsNeeded = vmCount + 5; // Azure reserves 5 IPs
+      const vmCidr = cidrFromHosts(totalIPsNeeded);
+      const vmSubnet = nextSubnet(vmCidr);
+      subnets.push({
+        name: "VM Subnet",
+        cidr: vmSubnet,
+        explanation: `For ${vmCount} VMs, needing ${totalIPsNeeded} total IPs (including Azure reserved), a /${vmCidr} is selected.`
+      });
 
       if (includeBastion) {
-        result += `<li><strong>Bastion Subnet:</strong> /27 (32 IPs)<br><em>Required minimum for Azure Bastion.</em></li>`;
+        subnets.push({
+          name: "Azure Bastion Subnet",
+          cidr: nextSubnet(27),
+          explanation: "Azure Bastion requires a /27 or larger. Reserved range: 32 IPs."
+        });
       }
       if (includeFirewall) {
-        result += `<li><strong>Firewall Subnet:</strong> /26 (64 IPs)<br><em>Recommended size for Azure Firewall deployment.</em></li>`;
+        subnets.push({
+          name: "Azure Firewall Subnet",
+          cidr: nextSubnet(26),
+          explanation: "FirewallSubnet requires a /26 or larger. Reserved range: 64 IPs."
+        });
       }
       if (includeGateway) {
-        result += `<li><strong>Gateway Subnet:</strong> /27 or /28<br><em>Used by VPN or ExpressRoute gateway. Azure requires a specific name: <code>GatewaySubnet</code>.</em></li>`;
+        subnets.push({
+          name: "GatewaySubnet",
+          cidr: nextSubnet(27),
+          explanation: "GatewaySubnet typically uses /27 or /28 depending on scale. Reserved range: 32 IPs."
+        });
       }
 
-      result += `</ul><p>Note: This is a suggestion. Always confirm alignment with Azure design and subnet availability within your VNet CIDR.</p>`;
-      output.innerHTML = result;
+      let output = `Subnets calculated from VNet ${vnet} for ${vmCount} VM(s):\n\n`;
+      subnets.forEach(s => {
+        output += `🔹 ${s.name}: ${s.cidr}\n   ${s.explanation}\n\n`;
+      });
+
+      document.getElementById('result').innerText = output;
     }
   </script>
 </body>
