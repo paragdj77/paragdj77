@@ -2,146 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Azure VNet Subnet Calculator - CloudSolid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Azure VNet Subnet Calculator</title>
   <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f7f9;
-    }
-    header {
-      background-color: #004578;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 { margin: 0; }
-    main {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-    .output {
-      margin-top: 20px;
-      font-family: monospace;
-      background: #eef6ff;
-      padding: 15px;
-      border-radius: 6px;
-    }
-    footer {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 40px;
-      color: #555;
-    }
+    body { font-family: sans-serif; padding: 2rem; background: #f4f4f4; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label, input, select { display: block; margin-top: 1rem; width: 100%; }
+    button { margin-top: 2rem; padding: 0.75rem; width: 100%; font-weight: bold; }
+    table { width: 100%; margin-top: 2rem; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 0.75rem; text-align: left; }
+    th { background: #0078d4; color: white; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CloudSolid - Azure VNet Subnet Calculator</h1>
-  </header>
-  <main>
-    <p><strong>Enter an Azure VNet address space in CIDR format</strong> (e.g. <code>10.0.0.0/16</code>) to calculate key network parameters.</p>
+  <div class="container">
+    <h1>Azure VNet Subnet Calculator</h1>
+    <label for="addressSpace">VNet Address Space (CIDR)</label>
+    <input type="text" id="addressSpace" placeholder="e.g., 10.0.0.0/16" />
 
-    <input type="text" id="cidrInput" placeholder="Enter CIDR (e.g., 10.0.0.0/16)">
-    <button onclick="calculateSubnet()">Calculate</button>
+    <label for="vmIps">Number of IPs for VMs</label>
+    <input type="number" id="vmIps" placeholder="e.g., 200" />
 
-    <div class="output" id="result"></div>
+    <label><input type="checkbox" id="includeBastion" /> Include Azure Bastion</label>
+    <label><input type="checkbox" id="includeGateway" /> Include VPN Gateway</label>
+    <label><input type="checkbox" id="includeFirewall" /> Include Azure Firewall</label>
 
-    <h3>🧠 What is Address Space in Azure?</h3>
-    <p>
-      In Azure, a <strong>Virtual Network (VNet)</strong> must be assigned an <strong>Address Space</strong> using CIDR notation. This defines the IP range available in your network.
-    </p>
-    <ul>
-      <li><strong>Address Space:</strong> The total range of IPs for your VNet.</li>
-      <li><strong>Subnets:</strong> Divisions inside the VNet created from the address space.</li>
-      <li><strong>No Overlapping:</strong> Subnets within a VNet cannot overlap.</li>
-    </ul>
-    <p>Example: If your VNet uses <code>10.0.0.0/16</code>, you can create multiple subnets like <code>10.0.1.0/24</code>, <code>10.0.2.0/24</code>, etc.</p>
-  </main>
+    <button onclick="calculateSubnets()">Calculate Subnets</button>
 
-  <footer>
-    Made with 💙 by CloudSolid | © 2025
-  </footer>
+    <table id="resultTable" style="display:none">
+      <thead>
+        <tr><th>Subnet Name</th><th>Address Range</th><th>CIDR</th><th>Purpose</th></tr>
+      </thead>
+      <tbody id="results"></tbody>
+    </table>
+  </div>
 
   <script>
-    function toBinary(n) {
-      return n.toString(2).padStart(8, '0');
+    function nextSubnet(base, size) {
+      const [ip, prefix] = base.split("/");
+      const parts = ip.split(".").map(Number);
+      const increment = Math.pow(2, 32 - size);
+      const ipInt = parts[0]*16777216 + parts[1]*65536 + parts[2]*256 + parts[3];
+      const next = ipInt + increment;
+      return [(next >>> 24) + "." + ((next >> 16) & 255) + "." + ((next >> 8) & 255) + "." + (next & 255), size];
     }
 
-    function fromBinary(b) {
-      return parseInt(b, 2);
-    }
+    function calculateSubnets() {
+      const addressSpace = document.getElementById("addressSpace").value.trim();
+      const vmIps = parseInt(document.getElementById("vmIps").value);
+      const includeBastion = document.getElementById("includeBastion").checked;
+      const includeGateway = document.getElementById("includeGateway").checked;
+      const includeFirewall = document.getElementById("includeFirewall").checked;
 
-    function calculateSubnet() {
-      const input = document.getElementById("cidrInput").value.trim();
-      const resultDiv = document.getElementById("result");
-      if (!input.includes('/')) {
-        resultDiv.innerHTML = "❌ Invalid CIDR format. Use format like 10.0.0.0/16";
-        return;
+      let [base, prefix] = addressSpace.split("/");
+      prefix = parseInt(prefix);
+
+      if (!base || isNaN(prefix)) return alert("Invalid CIDR block");
+
+      const results = [];
+      let currentSubnet = base;
+
+      if (!isNaN(vmIps)) {
+        const vmCidr = 32 - Math.ceil(Math.log2(vmIps + 5));
+        results.push({ name: "VM Subnet", ip: currentSubnet, cidr: vmCidr, purpose: "VMs" });
+        currentSubnet = nextSubnet(currentSubnet + "/" + vmCidr, vmCidr)[0];
       }
 
-      const [ip, prefix] = input.split('/');
-      const octets = ip.split('.').map(Number);
-      const subnetBits = parseInt(prefix);
-      if (octets.length !== 4 || subnetBits < 1 || subnetBits > 32) {
-        resultDiv.innerHTML = "❌ Invalid IP or subnet prefix.";
-        return;
+      if (includeBastion) {
+        results.push({ name: "Azure Bastion", ip: currentSubnet, cidr: 26, purpose: "Bastion" });
+        currentSubnet = nextSubnet(currentSubnet + "/26", 26)[0];
       }
 
-      const ipBinary = octets.map(toBinary).join('');
-      const networkPart = ipBinary.substring(0, subnetBits).padEnd(32, '0');
-      const broadcastPart = ipBinary.substring(0, subnetBits).padEnd(32, '1');
+      if (includeGateway) {
+        results.push({ name: "GatewaySubnet", ip: currentSubnet, cidr: 27, purpose: "VPN Gateway" });
+        currentSubnet = nextSubnet(currentSubnet + "/27", 27)[0];
+      }
 
-      const networkAddress = [
-        fromBinary(networkPart.substr(0,8)),
-        fromBinary(networkPart.substr(8,8)),
-        fromBinary(networkPart.substr(16,8)),
-        fromBinary(networkPart.substr(24,8))
-      ].join('.');
+      if (includeFirewall) {
+        results.push({ name: "AzureFirewallSubnet", ip: currentSubnet, cidr: 26, purpose: "Firewall" });
+        currentSubnet = nextSubnet(currentSubnet + "/26", 26)[0];
+      }
 
-      const broadcastAddress = [
-        fromBinary(broadcastPart.substr(0,8)),
-        fromBinary(broadcastPart.substr(8,8)),
-        fromBinary(broadcastPart.substr(16,8)),
-        fromBinary(broadcastPart.substr(24,8))
-      ].join('.');
-
-      const firstHost = [
-        fromBinary(networkPart.substr(0,8)),
-        fromBinary(networkPart.substr(8,8)),
-        fromBinary(networkPart.substr(16,8)),
-        fromBinary(networkPart.substr(24,8)) + 1
-      ].join('.');
-
-      const lastHost = [
-        fromBinary(broadcastPart.substr(0,8)),
-        fromBinary(broadcastPart.substr(8,8)),
-        fromBinary(broadcastPart.substr(16,8)),
-        fromBinary(broadcastPart.substr(24,8)) - 1
-      ].join('.');
-
-      const totalHosts = Math.pow(2, 32 - subnetBits) - 2;
-
-      resultDiv.innerHTML = `
-        <strong>🔍 Results for ${input}:</strong><br>
-        <strong>Network Address:</strong> ${networkAddress}<br>
-        <strong>Broadcast Address:</strong> ${broadcastAddress}<br>
-        <strong>First Host:</strong> ${firstHost}<br>
-        <strong>Last Host:</strong> ${lastHost}<br>
-        <strong>Total Usable Hosts:</strong> ${totalHosts}
-      `;
+      document.getElementById("resultTable").style.display = "table";
+      const tbody = document.getElementById("results");
+      tbody.innerHTML = "";
+      for (const row of results) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${row.name}</td><td>${row.ip}/${row.cidr}</td><td>/${row.cidr}</td><td>${row.purpose}</td>`;
+        tbody.appendChild(tr);
+      }
     }
   </script>
 </body>
