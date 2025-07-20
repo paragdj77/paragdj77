@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Azure VNet Subnet Calculator - CloudSolid</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f7f9;
+    }
+    header {
+      background-color: #004578;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { margin: 0; }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .output {
+      margin-top: 20px;
+      font-family: monospace;
+      background: #eef6ff;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    footer {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 40px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CloudSolid - Azure VNet Subnet Calculator</h1>
+  </header>
+  <main>
+    <p><strong>Enter an Azure VNet address space in CIDR format</strong> (e.g. <code>10.0.0.0/16</code>) to calculate key network parameters.</p>
+
+    <input type="text" id="cidrInput" placeholder="Enter CIDR (e.g., 10.0.0.0/16)">
+    <button onclick="calculateSubnet()">Calculate</button>
+
+    <div class="output" id="result"></div>
+
+    <h3>🧠 What is Address Space in Azure?</h3>
+    <p>
+      In Azure, a <strong>Virtual Network (VNet)</strong> must be assigned an <strong>Address Space</strong> using CIDR notation. This defines the IP range available in your network.
+    </p>
+    <ul>
+      <li><strong>Address Space:</strong> The total range of IPs for your VNet.</li>
+      <li><strong>Subnets:</strong> Divisions inside the VNet created from the address space.</li>
+      <li><strong>No Overlapping:</strong> Subnets within a VNet cannot overlap.</li>
+    </ul>
+    <p>Example: If your VNet uses <code>10.0.0.0/16</code>, you can create multiple subnets like <code>10.0.1.0/24</code>, <code>10.0.2.0/24</code>, etc.</p>
+  </main>
+
+  <footer>
+    Made with 💙 by CloudSolid | © 2025
+  </footer>
+
+  <script>
+    function toBinary(n) {
+      return n.toString(2).padStart(8, '0');
+    }
+
+    function fromBinary(b) {
+      return parseInt(b, 2);
+    }
+
+    function calculateSubnet() {
+      const input = document.getElementById("cidrInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      if (!input.includes('/')) {
+        resultDiv.innerHTML = "❌ Invalid CIDR format. Use format like 10.0.0.0/16";
+        return;
+      }
+
+      const [ip, prefix] = input.split('/');
+      const octets = ip.split('.').map(Number);
+      const subnetBits = parseInt(prefix);
+      if (octets.length !== 4 || subnetBits < 1 || subnetBits > 32) {
+        resultDiv.innerHTML = "❌ Invalid IP or subnet prefix.";
+        return;
+      }
+
+      const ipBinary = octets.map(toBinary).join('');
+      const networkPart = ipBinary.substring(0, subnetBits).padEnd(32, '0');
+      const broadcastPart = ipBinary.substring(0, subnetBits).padEnd(32, '1');
+
+      const networkAddress = [
+        fromBinary(networkPart.substr(0,8)),
+        fromBinary(networkPart.substr(8,8)),
+        fromBinary(networkPart.substr(16,8)),
+        fromBinary(networkPart.substr(24,8))
+      ].join('.');
+
+      const broadcastAddress = [
+        fromBinary(broadcastPart.substr(0,8)),
+        fromBinary(broadcastPart.substr(8,8)),
+        fromBinary(broadcastPart.substr(16,8)),
+        fromBinary(broadcastPart.substr(24,8))
+      ].join('.');
+
+      const firstHost = [
+        fromBinary(networkPart.substr(0,8)),
+        fromBinary(networkPart.substr(8,8)),
+        fromBinary(networkPart.substr(16,8)),
+        fromBinary(networkPart.substr(24,8)) + 1
+      ].join('.');
+
+      const lastHost = [
+        fromBinary(broadcastPart.substr(0,8)),
+        fromBinary(broadcastPart.substr(8,8)),
+        fromBinary(broadcastPart.substr(16,8)),
+        fromBinary(broadcastPart.substr(24,8)) - 1
+      ].join('.');
+
+      const totalHosts = Math.pow(2, 32 - subnetBits) - 2;
+
+      resultDiv.innerHTML = `
+        <strong>🔍 Results for ${input}:</strong><br>
+        <strong>Network Address:</strong> ${networkAddress}<br>
+        <strong>Broadcast Address:</strong> ${broadcastAddress}<br>
+        <strong>First Host:</strong> ${firstHost}<br>
+        <strong>Last Host:</strong> ${lastHost}<br>
+        <strong>Total Usable Hosts:</strong> ${totalHosts}
+      `;
+    }
+  </script>
+</body>
+</html>
