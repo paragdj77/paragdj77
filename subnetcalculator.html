@@ -3,101 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Azure VNet Subnet Calculator</title>
+  <title>Azure Subnet Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1, h2 { color: #2c3e50; }
-    label, input, select, button { margin: 10px 0; display: block; }
-    #result { background: #f4f4f4; padding: 10px; border: 1px solid #ccc; margin-top: 20px; white-space: pre-line; }
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+    h1, h2 { color: #0078d4; }
+    label, input, select { margin-top: 10px; display: block; }
+    .subnet-box { background: #fff; padding: 15px; border-radius: 8px; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .explanation { font-size: 0.9em; color: #444; margin-top: 5px; }
+    .tutorial { background: #e6f2ff; padding: 10px; border-left: 4px solid #0078d4; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h1>Azure VNet Subnet Calculator</h1>
-  <p>Enter your desired address space and number of VMs to estimate required subnets including Bastion, Gateway, and Firewall.</p>
+  <h1>Azure Subnet Calculator</h1>
+  <form id="calcForm">
+    <label>VNet Address Space (CIDR):</label>
+    <input type="text" id="vnetCidr" placeholder="e.g. 10.0.0.0/16" required />
 
-  <label for="vnet">VNet Address Space (e.g. 10.0.0.0/16):</label>
-  <input type="text" id="vnet" placeholder="10.0.0.0/16" />
+    <label>Number of VMs:</label>
+    <input type="number" id="vmCount" placeholder="e.g. 50" required />
 
-  <label for="vmCount">Number of VMs:</label>
-  <input type="number" id="vmCount" placeholder="e.g. 100" />
+    <label>Include Azure Bastion?</label>
+    <select id="includeBastion">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
 
-  <label><input type="checkbox" id="includeBastion" /> Include Bastion Subnet</label>
-  <label><input type="checkbox" id="includeFirewall" /> Include Firewall Subnet</label>
-  <label><input type="checkbox" id="includeGateway" /> Include Gateway Subnet</label>
+    <label>Include Firewall?</label>
+    <select id="includeFirewall">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
 
-  <button onclick="calculateSubnets()">Calculate Subnets</button>
+    <label>Include VPN Gateway?</label>
+    <select id="includeGateway">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
 
-  <div id="result"></div>
+    <button type="submit">Calculate Subnets</button>
+  </form>
+
+  <div id="results"></div>
+
+  <div class="tutorial">
+    <h2>🧠 Subnet Calculation Tutorial</h2>
+    <strong>Basic Rule:</strong><br />
+    Total IPs in subnet = 2<sup>(32 - CIDR)</sup><br />
+    <strong>Note:</strong> Azure reserves 5 IPs in each subnet.<br /><br />
+
+    <strong>Examples:</strong><br />
+    • /24 → 256 IPs → 251 usable<br />
+    • /25 → 128 IPs → 123 usable<br />
+    • /26 → 64 IPs → 59 usable<br /><br />
+
+    <strong>Service Recommendations:</strong>
+    <ul>
+      <li><strong>VM Subnet:</strong> Needs enough IPs for VM count + 5 (Azure overhead).</li>
+      <li><strong>Azure Bastion:</strong> Usually /27 → 32 IPs (27 usable)</li>
+      <li><strong>Azure Firewall:</strong> Prefer /26 → 64 IPs (59 usable)</li>
+      <li><strong>Gateway Subnet:</strong> /27 minimum</li>
+    </ul>
+  </div>
 
   <script>
-    function cidrFromHosts(hosts) {
-      let bits = 32;
-      while ((2 ** (32 - bits)) - 5 < hosts) bits--;
-      return bits;
+    function calculateSubnetMask(requiredIps) {
+      for (let cidr = 32; cidr >= 1; cidr--) {
+        if (Math.pow(2, 32 - cidr) - 5 >= requiredIps) return cidr;
+      }
+      return 0;
     }
 
-    function calculateSubnets() {
-      const vnet = document.getElementById('vnet').value.trim();
-      const vmCount = parseInt(document.getElementById('vmCount').value);
-      const includeBastion = document.getElementById('includeBastion').checked;
-      const includeFirewall = document.getElementById('includeFirewall').checked;
-      const includeGateway = document.getElementById('includeGateway').checked;
+    function getSubnetBlock(startIp, cidr) {
+      return `${startIp}/${cidr}`;
+    }
 
-      if (!vnet || isNaN(vmCount) || vmCount < 1) {
-        alert("Please enter valid VNet and VM count.");
-        return;
-      }
+    function nextSubnetBase(ip, cidr) {
+      const parts = ip.split('.').map(n => parseInt(n));
+      let blockSize = Math.pow(2, 32 - cidr);
+      let addr = ((parts[0]<<24)|(parts[1]<<16)|(parts[2]<<8)|parts[3]) + blockSize;
+      return [(addr >>> 24)&255, (addr >>> 16)&255, (addr >>> 8)&255, addr&255].join('.');
+    }
 
-      let [baseIP, vnetCidr] = vnet.split('/');
+    document.getElementById("calcForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const vmCount = parseInt(document.getElementById("vmCount").value);
+      const vnetCidr = document.getElementById("vnetCidr").value;
+      const includeBastion = document.getElementById("includeBastion").value === 'yes';
+      const includeFirewall = document.getElementById("includeFirewall").value === 'yes';
+      const includeGateway = document.getElementById("includeGateway").value === 'yes';
+
       let subnets = [];
-      let subnetCounter = 0;
-
-      function nextSubnet(cidr) {
-        let newSubnet = baseIP.split('.');
-        newSubnet[2] = parseInt(newSubnet[2]) + subnetCounter;
-        subnetCounter++;
-        return `${newSubnet.join('.').replace(/\.\d+$/, '.0')}/${cidr}`;
-      }
+      let currentIp = vnetCidr.split('/')[0];
 
       // VM Subnet
-      const totalIPsNeeded = vmCount + 5; // Azure reserves 5 IPs
-      const vmCidr = cidrFromHosts(totalIPsNeeded);
-      const vmSubnet = nextSubnet(vmCidr);
-      subnets.push({
-        name: "VM Subnet",
-        cidr: vmSubnet,
-        explanation: `For ${vmCount} VMs, needing ${totalIPsNeeded} total IPs (including Azure reserved), a /${vmCidr} is selected.`
-      });
+      let requiredIps = vmCount + 5;
+      let vmCidr = calculateSubnetMask(requiredIps);
+      subnets.push({ name: 'VM Subnet', cidr: vmCidr, ipBlock: getSubnetBlock(currentIp, vmCidr), explanation: `${vmCount} VMs → needs ${requiredIps} IPs → subnet /${vmCidr}` });
+      currentIp = nextSubnetBase(currentIp, vmCidr);
 
       if (includeBastion) {
-        subnets.push({
-          name: "Azure Bastion Subnet",
-          cidr: nextSubnet(27),
-          explanation: "Azure Bastion requires a /27 or larger. Reserved range: 32 IPs."
-        });
-      }
-      if (includeFirewall) {
-        subnets.push({
-          name: "Azure Firewall Subnet",
-          cidr: nextSubnet(26),
-          explanation: "FirewallSubnet requires a /26 or larger. Reserved range: 64 IPs."
-        });
-      }
-      if (includeGateway) {
-        subnets.push({
-          name: "GatewaySubnet",
-          cidr: nextSubnet(27),
-          explanation: "GatewaySubnet typically uses /27 or /28 depending on scale. Reserved range: 32 IPs."
-        });
+        subnets.push({ name: 'Azure Bastion', cidr: 27, ipBlock: getSubnetBlock(currentIp, 27), explanation: 'Azure recommends /27 for Bastion → 32 IPs (27 usable)' });
+        currentIp = nextSubnetBase(currentIp, 27);
       }
 
-      let output = `Subnets calculated from VNet ${vnet} for ${vmCount} VM(s):\n\n`;
+      if (includeFirewall) {
+        subnets.push({ name: 'Azure Firewall', cidr: 26, ipBlock: getSubnetBlock(currentIp, 26), explanation: 'Azure recommends /26 for Firewall → 64 IPs (59 usable)' });
+        currentIp = nextSubnetBase(currentIp, 26);
+      }
+
+      if (includeGateway) {
+        subnets.push({ name: 'VPN Gateway', cidr: 27, ipBlock: getSubnetBlock(currentIp, 27), explanation: 'Minimum /27 recommended for Gateway' });
+        currentIp = nextSubnetBase(currentIp, 27);
+      }
+
+      let html = '<h2>Generated Subnets</h2>';
       subnets.forEach(s => {
-        output += `🔹 ${s.name}: ${s.cidr}\n   ${s.explanation}\n\n`;
+        html += `<div class='subnet-box'><strong>${s.name}:</strong> ${s.ipBlock}<br /><div class='explanation'>${s.explanation}</div></div>`;
       });
 
-      document.getElementById('result').innerText = output;
-    }
+      document.getElementById("results").innerHTML = html;
+    });
   </script>
 </body>
 </html>
