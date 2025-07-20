@@ -1,103 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Azure Subnet Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azure VNet Subnet Calculator</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background: #f0f4f8;
-      color: #333;
-    }
-    h1 {
-      color: #0057b8;
-    }
-    label, input, button, select {
-      font-size: 1rem;
-      margin: 0.5rem 0;
-      display: block;
-    }
-    input, select {
-      padding: 0.5rem;
-      width: 100%;
-      max-width: 300px;
-    }
-    button {
-      background-color: #0078d4;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      margin-top: 1rem;
-      cursor: pointer;
-    }
-    .results, .explanation {
-      background: white;
-      padding: 1rem;
-      margin-top: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    summary {
-      font-weight: bold;
-      cursor: pointer;
-    }
-    pre {
-      background: #f5f5f5;
-      padding: 0.5rem;
-      overflow-x: auto;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f9fc; }
+    h1 { color: #2c3e50; }
+    label, select, input { display: block; margin: 10px 0; }
+    .output { background: #fff; padding: 15px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    code { background: #eef; padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
   <h1>Azure VNet Subnet Calculator</h1>
-  <label for="addressSpace">Enter VNet Address Space (CIDR):</label>
-  <input type="text" id="addressSpace" placeholder="e.g. 10.0.0.0/16" />
 
-  <label for="vmIps">Number of VM IPs Required:</label>
-  <input type="number" id="vmIps" placeholder="e.g. 100" />
+  <label for="vnet">Enter VNet Address Space (CIDR):</label>
+  <input type="text" id="vnet" placeholder="e.g., 10.0.0.0/16">
+
+  <label for="vmCount">Number of VMs in subnet:</label>
+  <input type="number" id="vmCount" min="1" placeholder="e.g., 100">
+
+  <label for="includeBastion">Include Azure Bastion Subnet?</label>
+  <select id="includeBastion">
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
+
+  <label for="includeFirewall">Include Azure Firewall Subnet?</label>
+  <select id="includeFirewall">
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
+
+  <label for="includeGateway">Include Gateway Subnet?</label>
+  <select id="includeGateway">
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
 
   <button onclick="calculateSubnets()">Calculate Subnets</button>
 
-  <div class="results" id="results"></div>
-  <details class="explanation">
-    <summary>📘 Explanation: How Subnets are Chosen</summary>
-    <p><strong>1. VNet Address Space:</strong> For example, <code>10.0.0.0/16</code> gives 65,536 IPs, ranging from <code>10.0.0.0</code> to <code>10.0.255.255</code>.</p>
-    <p><strong>2. VM Subnet:</strong> If 100 IPs are required, we use a <code>/25</code> subnet (128 IPs, 123 usable after Azure reserves 5).</p>
-    <p><strong>3. Bastion Subnet:</strong> Needs a minimum of <code>/27</code> (32 IPs), so we assign <code>10.0.0.128/27</code>.</p>
-    <p><strong>4. Firewall Subnet:</strong> Requires at least <code>/26</code> (64 IPs), so we assign <code>10.0.0.160/26</code>.</p>
-    <p><strong>5. GatewaySubnet:</strong> Typically a <code>/27</code> for basic VPN setups, assigned to <code>10.0.0.224/27</code>.</p>
-    <p><strong>Note:</strong> Remaining space from the /16 block is still available for future use. Subnets are aligned with Azure best practices.</p>
-  </details>
+  <div class="output" id="output"></div>
 
   <script>
-    function calculateSubnets() {
-      const addressSpace = document.getElementById("addressSpace").value.trim();
-      const vmIps = parseInt(document.getElementById("vmIps").value);
+    function getCIDR(requiredIPs) {
+      const usableIPs = requiredIPs + 5; // include Azure reserves
+      for (let i = 32; i >= 0; i--) {
+        const size = Math.pow(2, 32 - i);
+        if (size >= usableIPs) return i;
+      }
+      return null;
+    }
 
-      if (!/^\d+\.\d+\.\d+\.\d+\/\d+$/.test(addressSpace)) {
-        alert("Please enter a valid CIDR address space, e.g. 10.0.0.0/16");
+    function calculateSubnets() {
+      const vnetCIDR = document.getElementById("vnet").value;
+      const vmCount = parseInt(document.getElementById("vmCount").value);
+      const includeBastion = document.getElementById("includeBastion").value === "yes";
+      const includeFirewall = document.getElementById("includeFirewall").value === "yes";
+      const includeGateway = document.getElementById("includeGateway").value === "yes";
+
+      const output = document.getElementById("output");
+      if (!vnetCIDR || isNaN(vmCount) || vmCount <= 0) {
+        output.innerHTML = `<p style='color:red;'>Please enter a valid VNet CIDR and VM count.</p>`;
         return;
       }
 
-      const vmSubnetCidr = 25;
-      const bastionCidr = 27;
-      const firewallCidr = 26;
-      const gatewayCidr = 27;
+      let result = `<h2>Suggested Subnets</h2><ul>`;
+      const vmCIDR = getCIDR(vmCount);
+      result += `<li><strong>VM Subnet:</strong> /${vmCIDR} (Supports at least ${vmCount} VMs)<br><em>Calculated by finding the closest subnet size that offers enough usable IPs for ${vmCount} VMs. Azure reserves 5 IPs per subnet, so we add that buffer.</em></li>`;
 
-      const results = `
-        <h2>🧮 Suggested Subnet Allocation</h2>
-        <ul>
-          <li><strong>VM Subnet</strong>: 10.0.0.0/${vmSubnetCidr}</li>
-          <li><strong>Bastion Subnet</strong>: 10.0.0.128/${bastionCidr}</li>
-          <li><strong>Firewall Subnet</strong>: 10.0.0.160/${firewallCidr}</li>
-          <li><strong>GatewaySubnet</strong>: 10.0.0.224/${gatewayCidr}</li>
-        </ul>
-        <p>✅ All subnet sizes are selected to satisfy Azure minimum requirements and user input for VMs.</p>
-      `;
+      if (includeBastion) {
+        result += `<li><strong>Bastion Subnet:</strong> /27 (32 IPs)<br><em>Required minimum for Azure Bastion.</em></li>`;
+      }
+      if (includeFirewall) {
+        result += `<li><strong>Firewall Subnet:</strong> /26 (64 IPs)<br><em>Recommended size for Azure Firewall deployment.</em></li>`;
+      }
+      if (includeGateway) {
+        result += `<li><strong>Gateway Subnet:</strong> /27 or /28<br><em>Used by VPN or ExpressRoute gateway. Azure requires a specific name: <code>GatewaySubnet</code>.</em></li>`;
+      }
 
-      document.getElementById("results").innerHTML = results;
+      result += `</ul><p>Note: This is a suggestion. Always confirm alignment with Azure design and subnet availability within your VNet CIDR.</p>`;
+      output.innerHTML = result;
     }
   </script>
 </body>
