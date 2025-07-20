@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4: Azure Security - CloudSolid Training</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Module 4: Azure Security</h1>
+    <p>Protect your resources using Azure-native security tools.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. Azure Security Center</h2>
+      <ul>
+        <li>Unified security management and threat protection.</li>
+        <li>Provides security score and improvement recommendations.</li>
+        <li>Monitors VMs, Storage, Network, and more.</li>
+      </ul>
+      <h3>🔧 Setup:</h3>
+      <ol>
+        <li>Go to Azure Portal → Search "Microsoft Defender for Cloud"</li>
+        <li>Enable for your subscription → Enable Enhanced Security</li>
+        <li>Review security recommendations and apply fixes</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>2. Azure Sentinel</h2>
+      <ul>
+        <li>SIEM and SOAR tool for threat detection and automation.</li>
+        <li>Integrates with 100+ data sources (Azure AD, Office 365, etc.).</li>
+      </ul>
+      <h3>🔧 Setup:</h3>
+      <ol>
+        <li>Create a Log Analytics Workspace</li>
+        <li>Go to Azure Sentinel → +Add Workspace</li>
+        <li>Connect data sources like Azure AD or custom logs</li>
+        <li>Create analytics rules and workbooks</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>3. Azure Key Vault</h2>
+      <ul>
+        <li>Store secrets, keys, and certificates securely.</li>
+        <li>Supports role-based and policy-based access control.</li>
+      </ul>
+      <h3>🔧 Setup:</h3>
+      <ol>
+        <li>Search "Key Vault" → Create a new vault</li>
+        <li>Add a secret (e.g., connection string)</li>
+        <li>Assign access using Access Policies or RBAC</li>
+        <li>Use managed identity from a web app or VM to retrieve it</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>4. Azure Information Protection (AIP)</h2>
+      <ul>
+        <li>Protect documents/emails using classification and encryption.</li>
+        <li>Apply labels manually or automatically.</li>
+      </ul>
+      <h3>🔧 Setup:</h3>
+      <ol>
+        <li>From Microsoft 365 Admin → Activate Azure Information Protection</li>
+        <li>Go to Azure Portal → AIP → Create and publish labels</li>
+        <li>Install AIP Client on user machine</li>
+        <li>Label documents from Office apps</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>5. Network Security Groups (NSGs)</h2>
+      <ul>
+        <li>Control network traffic with allow/deny rules.</li>
+        <li>Attach NSGs to subnets or individual NICs.</li>
+      </ul>
+      <h3>🔧 Setup:</h3>
+      <ol>
+        <li>Go to Networking → Create a new NSG</li>
+        <li>Add inbound/outbound security rules (e.g., allow port 80)</li>
+        <li>Associate NSG with subnet or NIC</li>
+      </ol>
+    </section>
+
+    <section>
+      <h3>📥 Download PDF</h3>
+      <a href="#" target="_blank">Download Module 4 Notes (PDF)</a>
+    </section>
+
+    <section>
+      <h3>🎥 Watch Training Video</h3>
+      <iframe width="100%" height="315" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+    </section>
+
+    <section>
+      <h3>💬 Need Help?</h3>
+      <p>Chat with us on WhatsApp for instant support.</p>
+      <a href="https://wa.me/919999999999" target="_blank">Message us on WhatsApp</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 CloudSolid Training</p>
+  </footer>
+</body>
+</html>
