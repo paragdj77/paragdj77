@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Azure VMSS & Autoscaling</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS (Animate on Scroll) for smooth animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+    }
+  </style>
+</head>
+<body class="text-gray-800">
+
+  <header class="bg-blue-700 text-white text-center py-6 shadow-md">
+    <h1 class="text-3xl font-bold">Azure VMSS & Autoscaling Explained</h1>
+    <p class="text-lg mt-2">Automatically scale your applications for performance and cost efficiency</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-6">
+    <section class="grid md:grid-cols-2 gap-10 my-10 items-center">
+      <img src="https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/media/overview.png" alt="VMSS Illustration" class="rounded-xl shadow-xl" data-aos="fade-right">
+      <div data-aos="fade-left">
+        <h2 class="text-2xl font-semibold mb-3">What is VMSS?</h2>
+        <p class="text-gray-700 mb-4">
+          A Virtual Machine Scale Set (VMSS) lets you deploy and manage a set of auto-scaling, load-balanced VMs. You can automatically increase or decrease the number of instances based on demand.
+        </p>
+        <ul class="list-disc list-inside text-gray-600">
+          <li>Distribute traffic with Load Balancer</li>
+          <li>Maintain availability and reliability</li>
+          <li>Uniform and flexible orchestration</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-lg shadow p-6 my-10" data-aos="fade-up">
+      <h2 class="text-xl font-bold mb-4">Autoscaling in VMSS</h2>
+      <p>
+        Azure Autoscale automatically adjusts the number of VM instances in your scale set based on CPU usage, memory, or custom metrics.
+      </p>
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="p-4 bg-blue-50 rounded-lg shadow" data-aos="zoom-in">
+          <h3 class="font-bold text-blue-700">🔁 Scale Out</h3>
+          <p>When CPU > 70% for 5 minutes, add new VMs to handle load.</p>
+        </div>
+        <div class="p-4 bg-green-50 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="100">
+          <h3 class="font-bold text-green-700">🔄 Scale In</h3>
+          <p>When CPU < 30%, reduce VM count to save cost.</p>
+        </div>
+        <div class="p-4 bg-yellow-50 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="200">
+          <h3 class="font-bold text-yellow-700">⚙️ Custom Metrics</h3>
+          <p>Trigger scaling based on HTTP queue length, memory usage, etc.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-center my-16" data-aos="fade-up">
+      <h2 class="text-2xl font-bold mb-4">Why Use VMSS + Autoscaling?</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto mb-6">
+        Combine high availability with cost efficiency. VMSS with autoscaling is ideal for production environments, seasonal traffic, and mission-critical applications.
+      </p>
+      <a href="https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+        Learn More from Microsoft Docs
+      </a>
+    </section>
+  </main>
+
+  <footer class="bg-blue-900 text-white text-center py-4 mt-10">
+    <p>&copy; 2025 CloudSolid | Powered by Azure</p>
+  </footer>
+
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+</body>
+</html>
