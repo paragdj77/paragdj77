@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surface Areas & Volumes Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .question-card:hover {
+            transform: translateX(5px);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .answer-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .answer-input {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .answer-input.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .answer-input.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .unit {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+            min-width: 60px;
+        }
+
+        .feedback {
+            display: none;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 15px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .score-display {
+            display: none;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .score-display.show {
+            display: block;
+        }
+
+        .score-display h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .score-display p {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .score-percentage {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Surface Areas & Volumes Quiz</h1>
+            <p>Class 9 Mathematics | 25 Questions</p>
+            <div class="timer" id="timer">Time: 00:00</div>
+        </div>
+
+        <div class="quiz-content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="quizForm">
+                <!-- Question 1 -->
+                <div class="question-card">
+                    <span class="question-number">Q1</span>
+                    <div class="question-text">A cone has radius 7 cm and slant height 25 cm. Find its CSA.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="550" data-tolerance="1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-card">
+                    <span class="question-number">Q2</span>
+                    <div class="question-text">A cone has radius 14 cm and height 48 cm. Find its TSA.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="2816" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-card">
+                    <span class="question-number">Q3</span>
+                    <div class="question-text">Find the surface area of a sphere of radius 21 cm.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="5544" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-card">
+                    <span class="question-number">Q4</span>
+                    <div class="question-text">Find the CSA of a hemisphere of radius 10 cm.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="628.57" data-tolerance="1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="question-card">
+                    <span class="question-number">Q5</span>
+                    <div class="question-text">Find the TSA of a hemisphere of radius 14 cm.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="1848" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question-card">
+                    <span class="question-number">Q6</span>
+                    <div class="question-text">Find the volume of a cone with radius 7 cm and height 24 cm.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="1232" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="question-card">
+                    <span class="question-number">Q7</span>
+                    <div class="question-text">Find the volume of a sphere of radius 21 cm.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="38808" data-tolerance="10" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="question-card">
+                    <span class="question-number">Q8</span>
+                    <div class="question-text">A cone has slant height 13 cm and base radius 5 cm. Find CSA.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="204.28" data-tolerance="1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="question-card">
+                    <span class="question-number">Q9</span>
+                    <div class="question-text">A sphere's surface area is 314 cm². Find its radius. (Use π = 3.14)</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="5" data-tolerance="0.1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 10 -->
+                <div class="question-card">
+                    <span class="question-number">Q10</span>
+                    <div class="question-text">A hemisphere has volume 1437.33 cm³. Find radius.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="10.5" data-tolerance="0.5" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 11 -->
+                <div class="question-card">
+                    <span class="question-number">Q11</span>
+                    <div class="question-text">A solid cone has volume 154 cm³ and radius 7 cm. Find height.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="3" data-tolerance="0.1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 12 -->
+                <div class="question-card">
+                    <span class="question-number">Q12</span>
+                    <div class="question-text">Radius of a sphere is 10 cm. Find volume.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="4190.48" data-tolerance="10" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 13 -->
+                <div class="question-card">
+                    <span class="question-number">Q13</span>
+                    <div class="question-text">Height of a cone = 12 cm, slant height = 13 cm, radius = 5 cm. Find TSA.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="282.86" data-tolerance="1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 14 -->
+                <div class="question-card">
+                    <span class="question-number">Q14</span>
+                    <div class="question-text">A cone has CSA 220 cm² and radius 7 cm. Find slant height.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="10" data-tolerance="0.1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 15 -->
+                <div class="question-card">
+                    <span class="question-number">Q15</span>
+                    <div class="question-text">A sphere has volume 288π cm³. Find radius.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="6" data-tolerance="0.1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 16 -->
+                <div class="question-card">
+                    <span class="question-number">Q16</span>
+                    <div class="question-text">A hemisphere has radius 21 cm. Find CSA.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="2772" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 17 -->
+                <div class="question-card">
+                    <span class="question-number">Q17</span>
+                    <div class="question-text">Find the height of a cone of radius 14 cm and volume 616π cm³.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="9" data-tolerance="0.5" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 18 -->
+                <div class="question-card">
+                    <span class="question-number">Q18</span>
+                    <div class="question-text">CSA of a cone is 154 cm², radius 7 cm. Find slant height.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="7" data-tolerance="0.1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 19 -->
+                <div class="question-card">
+                    <span class="question-number">Q19</span>
+                    <div class="question-text">TSA of cone = 704 cm², radius = 7 cm. Find slant height.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="25" data-tolerance="0.5" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 20 -->
+                <div class="question-card">
+                    <span class="question-number">Q20</span>
+                    <div class="question-text">A sphere's surface area is 1256 cm². Find radius.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="10" data-tolerance="0.5" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 21 -->
+                <div class="question-card">
+                    <span class="question-number">Q21</span>
+                    <div class="question-text">A cone has radius 6 cm and height 8 cm. Find volume.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="301.71" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 22 -->
+                <div class="question-card">
+                    <span class="question-number">Q22</span>
+                    <div class="question-text">A hemisphere's TSA = 1386 cm². Find radius.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="14" data-tolerance="1" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 23 -->
+                <div class="question-card">
+                    <span class="question-number">Q23</span>
+                    <div class="question-text">A sphere's volume = 904.78 cm³. Find surface area. (Use π = 3.14)</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="452.16" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm²</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 24 -->
+                <div class="question-card">
+                    <span class="question-number">Q24</span>
+                    <div class="question-text">Cone radius 5 cm, slant height 13 cm. Find volume.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="314.29" data-tolerance="2" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <!-- Question 25 -->
+                <div class="question-card">
+                    <span class="question-number">Q25</span>
+                    <div class="question-text">A hemisphere has CSA = 1256 cm². Find volume.</div>
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" data-answer="16761.9" data-tolerance="100" step="0.01" placeholder="Enter answer">
+                        <span class="unit">cm³</span>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">📊 Submit Quiz</button>
+                <button type="button" class="reset-btn" onclick="resetQuiz()">🔄 Reset Quiz</button>
+            </form>
+
+            <div class="score-display" id="scoreDisplay">
+                <h2>🎉 Quiz Completed!</h2>
+                <div class="score-percentage" id="scorePercentage">0%</div>
+                <p id="scoreText">You got 0 out of 25 correct</p>
+                <p id="gradeText"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = Date.now();
+        let timerInterval;
+
+        // Start timer
+        timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }, 1000);
+
+        // Update progress bar as user fills answers
+        const inputs = document.querySelectorAll('.answer-input');
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+        });
+
+        function updateProgress() {
+            const filled = Array.from(inputs).filter(input => input.value !== '').length;
+            const percentage = (filled / inputs.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        // Handle form submission
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            clearInterval(timerInterval);
+            
+            let correct = 0;
+            const totalQuestions = inputs.length;
+            
+            inputs.forEach(input => {
+                const userAnswer = parseFloat(input.value);
+                const correctAnswer = parseFloat(input.dataset.answer);
+                const tolerance = parseFloat(input.dataset.tolerance);
+                const feedback = input.parentElement.nextElementSibling;
+                
+                if (Math.abs(userAnswer - correctAnswer) <= tolerance) {
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                    feedback.textContent = `✓ Correct! Answer: ${correctAnswer}`;
+                    feedback.className = 'feedback show correct';
+                    correct++;
+                } else {
+                    input.classList.add('incorrect');
+                    input.classList.remove('correct');
+                    feedback.textContent = `✗ Incorrect. Correct answer: ${correctAnswer}`;
+                    feedback.className = 'feedback show incorrect';
+                }
+                
+                input.disabled = true;
+            });
+            
+            // Show score
+            const percentage = Math.round((correct / totalQuestions) * 100);
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            document.getElementById('scoreText').textContent = 
+                `You got ${correct} out of ${totalQuestions} correct`;
+            
+            let grade = '';
+            if (percentage >= 90) grade = '🏆 Excellent! Outstanding work!';
+            else if (percentage >= 75) grade = '🌟 Great job! Well done!';
+            else if (percentage >= 60) grade = '👍 Good effort! Keep practicing!';
+            else if (percentage >= 40) grade = '📚 Nice try! Review the concepts and try again!';
+            else grade = '💪 Keep learning! Practice makes perfect!';
+            
+            document.getElementById('gradeText').textContent = grade;
+            document.getElementById('scoreDisplay').classList.add('show');
+            
+            // Disable submit button
+            document.querySelector('.submit-btn').disabled = true;
+            document.querySelector('.submit-btn').style.opacity = '0.5';
+            document.querySelector('.submit-btn').style.cursor = 'not-allowed';
+            
+            // Scroll to score
+            document.getElementById('scoreDisplay').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        function resetQuiz() {
+            // Reset timer
+            clearInterval(timerInterval);
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+            
+            // Reset all inputs
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'incorrect');
+                input.disabled = false;
+                const feedback = input.parentElement.nextElementSibling;
+                feedback.className = 'feedback';
+            });
+            
+            // Reset progress bar
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Hide score display
+            document.getElementById('scoreDisplay').classList.remove('show');
+            
+            // Enable submit button
+            document.querySelector('.submit-btn').disabled = false;
+            document.querySelector('.submit-btn').style.opacity = '1';
+            document.querySelector('.submit-btn').style.cursor = 'pointer';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
