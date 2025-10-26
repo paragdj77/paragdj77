@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 9 - Triangles Chapter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+        .tab:hover {
+            background: #e0e0e0;
+        }
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        .content {
+            padding: 30px;
+            display: none;
+        }
+        .content.active {
+            display: block;
+        }
+        .theory-section {
+            margin-bottom: 30px;
+        }
+        .theory-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .theory-section h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .theory-section p, .theory-section ul {
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .theory-section ul {
+            margin-left: 30px;
+        }
+        .theory-section li {
+            margin-bottom: 8px;
+        }
+        .question {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .question h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .options label {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .options label:hover {
+            background: #e8eaf6;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: transform 0.3s;
+        }
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+        .result {
+            display: none;
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .result h3 {
+            color: #2e7d32;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        .result p {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .reset-btn {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.3s;
+        }
+        .reset-btn:hover {
+            transform: scale(1.05);
+        }
+        .formula {
+            background: #fff3e0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📐 Triangles - Class 9 NCERT</h1>
+            <p>Chapter Theory & Practice Exam</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('theory')">Theory</button>
+            <button class="tab" onclick="showTab('exam')">Exam (25 Questions)</button>
+        </div>
+        
+        <div id="theory" class="content active">
+            <div class="theory-section">
+                <h2>1. Introduction to Triangles</h2>
+                <p>A triangle is a closed figure formed by three line segments. A triangle has three sides, three angles, and three vertices.</p>
+                
+                <h3>Types of Triangles (Based on Sides)</h3>
+                <ul>
+                    <li><strong>Equilateral Triangle:</strong> All three sides are equal, and all angles are 60°</li>
+                    <li><strong>Isosceles Triangle:</strong> Two sides are equal, and angles opposite to equal sides are equal</li>
+                    <li><strong>Scalene Triangle:</strong> All three sides are of different lengths</li>
+                </ul>
+                
+                <h3>Types of Triangles (Based on Angles)</h3>
+                <ul>
+                    <li><strong>Acute Triangle:</strong> All angles are less than 90°</li>
+                    <li><strong>Right Triangle:</strong> One angle is exactly 90°</li>
+                    <li><strong>Obtuse Triangle:</strong> One angle is greater than 90°</li>
+                </ul>
+            </div>
+            
+            <div class="theory-section">
+                <h2>2. Congruence of Triangles</h2>
+                <p>Two triangles are congruent if their corresponding sides and angles are equal. When triangles are congruent, one can be superimposed on the other to cover it exactly.</p>
+                
+                <h3>Criteria for Congruence</h3>
+                <ul>
+                    <li><strong>SSS (Side-Side-Side):</strong> If three sides of one triangle are equal to three sides of another triangle, the triangles are congruent</li>
+                    <li><strong>SAS (Side-Angle-Side):</strong> If two sides and the included angle of one triangle are equal to two sides and the included angle of another triangle, they are congruent</li>
+                    <li><strong>ASA (Angle-Side-Angle):</strong> If two angles and the included side of one triangle are equal to two angles and the included side of another triangle, they are congruent</li>
+                    <li><strong>AAS (Angle-Angle-Side):</strong> If two angles and a non-included side of one triangle are equal to the corresponding angles and side of another triangle, they are congruent</li>
+                    <li><strong>RHS (Right angle-Hypotenuse-Side):</strong> If the hypotenuse and one side of a right triangle are equal to the hypotenuse and one side of another right triangle, they are congruent</li>
+                </ul>
+            </div>
+            
+            <div class="theory-section">
+                <h2>3. Properties of Triangles</h2>
+                <ul>
+                    <li>The sum of all angles in a triangle is 180°</li>
+                    <li>An exterior angle of a triangle is equal to the sum of the two interior opposite angles</li>
+                    <li>The sum of any two sides of a triangle is greater than the third side</li>
+                    <li>In an isosceles triangle, angles opposite to equal sides are equal</li>
+                    <li>In an equilateral triangle, each angle measures 60°</li>
+                </ul>
+            </div>
+            
+            <div class="theory-section">
+                <h2>4. Inequalities in Triangles</h2>
+                <ul>
+                    <li>If two sides of a triangle are unequal, the angle opposite to the longer side is larger</li>
+                    <li>In a triangle, the side opposite to the larger angle is longer</li>
+                    <li>The sum of any two sides of a triangle is greater than the third side</li>
+                    <li>The difference of any two sides is less than the third side</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="exam" class="content">
+            <form id="examForm">
+                <div class="question">
+                    <h4>Q1. What is the sum of all angles in a triangle?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> 90°</label>
+                        <label><input type="radio" name="q1" value="b"> 180°</label>
+                        <label><input type="radio" name="q1" value="c"> 270°</label>
+                        <label><input type="radio" name="q1" value="d"> 360°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q2. In an equilateral triangle, each angle measures:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> 45°</label>
+                        <label><input type="radio" name="q2" value="b"> 60°</label>
+                        <label><input type="radio" name="q2" value="c"> 90°</label>
+                        <label><input type="radio" name="q2" value="d"> 120°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q3. Which congruence criterion uses three sides?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> SAS</label>
+                        <label><input type="radio" name="q3" value="b"> ASA</label>
+                        <label><input type="radio" name="q3" value="c"> SSS</label>
+                        <label><input type="radio" name="q3" value="d"> RHS</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q4. In an isosceles triangle, the angles opposite to equal sides are:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="a"> Unequal</label>
+                        <label><input type="radio" name="q4" value="b"> Equal</label>
+                        <label><input type="radio" name="q4" value="c"> Complementary</label>
+                        <label><input type="radio" name="q4" value="d"> Supplementary</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q5. A triangle with one angle equal to 90° is called:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="a"> Acute triangle</label>
+                        <label><input type="radio" name="q5" value="b"> Obtuse triangle</label>
+                        <label><input type="radio" name="q5" value="c"> Right triangle</label>
+                        <label><input type="radio" name="q5" value="d"> Equilateral triangle</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q6. The exterior angle of a triangle is equal to:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q6" value="a"> One interior angle</label>
+                        <label><input type="radio" name="q6" value="b"> Sum of two interior opposite angles</label>
+                        <label><input type="radio" name="q6" value="c"> 180°</label>
+                        <label><input type="radio" name="q6" value="d"> 90°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q7. In triangle ABC, if AB = AC, then angle B equals:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q7" value="a"> Angle A</label>
+                        <label><input type="radio" name="q7" value="b"> Angle C</label>
+                        <label><input type="radio" name="q7" value="c"> 90°</label>
+                        <label><input type="radio" name="q7" value="d"> 60°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q8. Which criterion is specifically for right triangles?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q8" value="a"> SSS</label>
+                        <label><input type="radio" name="q8" value="b"> SAS</label>
+                        <label><input type="radio" name="q8" value="c"> ASA</label>
+                        <label><input type="radio" name="q8" value="d"> RHS</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q9. The sum of any two sides of a triangle is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q9" value="a"> Less than the third side</label>
+                        <label><input type="radio" name="q9" value="b"> Equal to the third side</label>
+                        <label><input type="radio" name="q9" value="c"> Greater than the third side</label>
+                        <label><input type="radio" name="q9" value="d"> None of these</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q10. A triangle with all sides of different lengths is called:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q10" value="a"> Equilateral</label>
+                        <label><input type="radio" name="q10" value="b"> Isosceles</label>
+                        <label><input type="radio" name="q10" value="c"> Scalene</label>
+                        <label><input type="radio" name="q10" value="d"> Right triangle</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q11. In SAS congruence, S stands for:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q11" value="a"> Side</label>
+                        <label><input type="radio" name="q11" value="b"> Sum</label>
+                        <label><input type="radio" name="q11" value="c"> Similar</label>
+                        <label><input type="radio" name="q11" value="d"> Square</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q12. If two angles of a triangle are 60° and 70°, the third angle is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q12" value="a"> 40°</label>
+                        <label><input type="radio" name="q12" value="b"> 50°</label>
+                        <label><input type="radio" name="q12" value="c"> 60°</label>
+                        <label><input type="radio" name="q12" value="d"> 70°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q13. A triangle with all angles less than 90° is called:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q13" value="a"> Right triangle</label>
+                        <label><input type="radio" name="q13" value="b"> Obtuse triangle</label>
+                        <label><input type="radio" name="q13" value="c"> Acute triangle</label>
+                        <label><input type="radio" name="q13" value="d"> Isosceles triangle</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q14. Two triangles are congruent if:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q14" value="a"> They have same shape</label>
+                        <label><input type="radio" name="q14" value="b"> They have same angles</label>
+                        <label><input type="radio" name="q14" value="c"> They can be superimposed exactly</label>
+                        <label><input type="radio" name="q14" value="d"> They have same perimeter</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q15. In ASA congruence, the side must be:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q15" value="a"> Between the two angles</label>
+                        <label><input type="radio" name="q15" value="b"> Outside the two angles</label>
+                        <label><input type="radio" name="q15" value="c"> The longest side</label>
+                        <label><input type="radio" name="q15" value="d"> Any side</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q16. If in a triangle, one side is longer, the angle opposite to it is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q16" value="a"> Smaller</label>
+                        <label><input type="radio" name="q16" value="b"> Larger</label>
+                        <label><input type="radio" name="q16" value="c"> Equal</label>
+                        <label><input type="radio" name="q16" value="d"> 90°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q17. How many vertices does a triangle have?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q17" value="a"> 2</label>
+                        <label><input type="radio" name="q17" value="b"> 3</label>
+                        <label><input type="radio" name="q17" value="c"> 4</label>
+                        <label><input type="radio" name="q17" value="d"> 5</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q18. A triangle with one angle greater than 90° is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q18" value="a"> Acute triangle</label>
+                        <label><input type="radio" name="q18" value="b"> Right triangle</label>
+                        <label><input type="radio" name="q18" value="c"> Obtuse triangle</label>
+                        <label><input type="radio" name="q18" value="d"> Equilateral triangle</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q19. In an equilateral triangle, all sides are:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q19" value="a"> Different</label>
+                        <label><input type="radio" name="q19" value="b"> Two equal</label>
+                        <label><input type="radio" name="q19" value="c"> All equal</label>
+                        <label><input type="radio" name="q19" value="d"> None equal</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q20. The difference of any two sides of a triangle is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q20" value="a"> Greater than the third side</label>
+                        <label><input type="radio" name="q20" value="b"> Equal to the third side</label>
+                        <label><input type="radio" name="q20" value="c"> Less than the third side</label>
+                        <label><input type="radio" name="q20" value="d"> Zero</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q21. AAS stands for:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q21" value="a"> Angle-Angle-Side</label>
+                        <label><input type="radio" name="q21" value="b"> Angle-Area-Side</label>
+                        <label><input type="radio" name="q21" value="c"> Acute-Angle-Side</label>
+                        <label><input type="radio" name="q21" value="d"> All-Angles-Sum</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q22. How many sides does a triangle have?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q22" value="a"> 2</label>
+                        <label><input type="radio" name="q22" value="b"> 3</label>
+                        <label><input type="radio" name="q22" value="c"> 4</label>
+                        <label><input type="radio" name="q22" value="d"> 5</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q23. In RHS congruence, H stands for:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q23" value="a"> Height</label>
+                        <label><input type="radio" name="q23" value="b"> Hypotenuse</label>
+                        <label><input type="radio" name="q23" value="c"> Horizontal</label>
+                        <label><input type="radio" name="q23" value="d"> Half</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q24. If angle A = 45° and angle B = 45° in a triangle, then angle C is:</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q24" value="a"> 45°</label>
+                        <label><input type="radio" name="q24" value="b"> 60°</label>
+                        <label><input type="radio" name="q24" value="c"> 90°</label>
+                        <label><input type="radio" name="q24" value="d"> 180°</label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h4>Q25. Which of the following can be the sides of a triangle?</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q25" value="a"> 2 cm, 3 cm, 7 cm</label>
+                        <label><input type="radio" name="q25" value="b"> 3 cm, 4 cm, 5 cm</label>
+                        <label><input type="radio" name="q25" value="c"> 1 cm, 2 cm, 5 cm</label>
+                        <label><input type="radio" name="q25" value="d"> 2 cm, 2 cm, 6 cm</label>
+                    </div>
+                </div>
+                
+                <button type="button" class="submit-btn" onclick="calculateScore()">Submit Exam</button>
+            </form>
+            
+            <div id="result" class="result">
+                <h3>🎉 Exam Results</h3>
+                <p id="scoreText"></p>
+                <p id="percentageText"></p>
+                <p id="gradeText"></p>
+                <button class="reset-btn" onclick="resetExam()">Retake Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const answers = {
+            q1: 'b', q2: 'b', q3: 'c', q4: 'b', q5: 'c',
+            q6: 'b', q7: 'b', q8: 'd', q9: 'c', q10: 'c',
+            q11: 'a', q12: 'b', q13: 'c', q14: 'c', q15: 'a',
+            q16: 'b', q17: 'b', q18: 'c', q19: 'c', q20: 'c',
+            q21: 'a', q22: 'b', q23: 'b', q24: 'c', q25: 'b'
+        };
+
+        function showTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function calculateScore() {
+            let score = 0;
+            let answered = 0;
+            
+            for (let i = 1; i <= 25; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answered++;
+                    if (selected.value === answers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+            
+            if (answered < 25) {
+                alert(`Please answer all questions! You have answered ${answered} out of 25 questions.`);
+                return;
+            }
+            
+            const percentage = (score / 25 * 100).toFixed(1);
+            let grade = '';
+            
+            if (percentage >= 90) grade = 'A+ (Excellent!)';
+            else if (percentage >= 80) grade = 'A (Very Good!)';
+            else if (percentage >= 70) grade = 'B (Good)';
+            else if (percentage >= 60) grade = 'C (Satisfactory)';
+            else if (percentage >= 50) grade = 'D (Pass)';
+            else grade = 'F (Need Improvement)';
+            
+            document.getElementById('scoreText').textContent = `You scored ${score} out of 25`;
+            document.getElementById('percentageText').textContent = `Percentage: ${percentage}%`;
+            document.getElementById('gradeText').textContent = `Grade: ${grade}`;
+            
+            document.getElementById('examForm').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function resetExam() {
+            document.getElementById('examForm').reset();
+            document.getElementById('examForm').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
