@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Worksheets - Printable</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            .worksheet {
+                box-shadow: none;
+                margin: 0;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .print-btn:hover {
+            background: #1976D2;
+        }
+        
+        .worksheet {
+            background: white;
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto 20px;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .half-page {
+            height: 148.5mm;
+            padding: 12mm;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .half-page:first-child {
+            border-bottom: 2px dashed #666;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .header h2 {
+            margin: 0 0 3px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .header p {
+            margin: 0;
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .student-info {
+            margin-bottom: 8px;
+            font-size: 11px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .student-info .field {
+            display: flex;
+            align-items: center;
+        }
+        
+        .student-info .underline {
+            display: inline-block;
+            width: 100px;
+            border-bottom: 1px solid #000;
+            margin-left: 5px;
+        }
+        
+        .content-box {
+            border: 1px solid #000;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #fafafa;
+        }
+        
+        .content-box h3 {
+            margin: 0 0 5px 0;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #666;
+            padding-bottom: 3px;
+        }
+        
+        .content-box p {
+            margin: 4px 0;
+            line-height: 1.4;
+            font-size: 12px;
+        }
+        
+        .content-box ul {
+            margin: 4px 0 4px 18px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .content-box li {
+            margin-bottom: 2px;
+        }
+        
+        .diagram {
+            text-align: center;
+            margin: 8px 0;
+            flex-shrink: 0;
+        }
+        
+        .write-section {
+            border: 1px solid #000;
+            padding: 10px;
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .write-section h3 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #666;
+            padding-bottom: 3px;
+        }
+        
+        .lined-paper {
+            flex: 1;
+            background-image: repeating-linear-gradient(
+                transparent,
+                transparent 22px,
+                #999 22px,
+                #999 23px
+            );
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn no-print" id="printBtn">🖨️ Print Worksheets</button>
+    
+    <script>
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+    
+    <!-- Worksheet 1: SAS Congruence -->
+    <div class="worksheet">
+        <div class="half-page">
+            <div class="header">
+                <h2>📐 SAS CONGRUENCE RULE (Axiom)</h2>
+                <p>Side-Angle-Side Congruence Criterion</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="content-box">
+                <h3>Statement:</h3>
+                <p><strong>Two triangles are congruent if two sides and the included angle of one triangle are equal to the corresponding two sides and included angle of the other triangle.</strong></p>
+            </div>
+            
+            <div class="content-box">
+                <h3>Given:</h3>
+                <p>In △ABC and △DEF: AB = DE, ∠A = ∠D, AC = DF</p>
+            </div>
+            
+            <div class="diagram">
+                <svg width="320" height="100" viewBox="0 0 320 100">
+                    <!-- Triangle ABC -->
+                    <polygon points="30,90 90,15 110,90" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <text x="22" y="102" font-size="13" font-weight="bold">A</text>
+                    <text x="86" y="12" font-size="13" font-weight="bold">B</text>
+                    <text x="112" y="102" font-size="13" font-weight="bold">C</text>
+                    <text x="55" y="45" font-size="11">AB</text>
+                    <text x="60" y="100" font-size="11">AC</text>
+                    <path d="M 38,90 A 10,10 0 0,0 38,80" fill="none" stroke="#000" stroke-width="1.5"/>
+                    
+                    <!-- Triangle DEF -->
+                    <polygon points="190,90 250,15 270,90" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <text x="182" y="102" font-size="13" font-weight="bold">D</text>
+                    <text x="246" y="12" font-size="13" font-weight="bold">E</text>
+                    <text x="272" y="102" font-size="13" font-weight="bold">F</text>
+                    <text x="215" y="45" font-size="11">DE</text>
+                    <text x="220" y="100" font-size="11">DF</text>
+                    <path d="M 198,90 A 10,10 0 0,0 198,80" fill="none" stroke="#000" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="content-box">
+                <h3>To Prove:</h3>
+                <p>△ABC ≅ △DEF</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>Conclusion:</h3>
+                <p>By SAS congruence criterion, △ABC ≅ △DEF</p>
+                <p><strong>Note:</strong> The angle must be included between the two sides.</p>
+            </div>
+        </div>
+        
+        <div class="half-page">
+            <div class="header">
+                <h2>✍️ RE-WRITE: SAS Congruence Rule</h2>
+                <p>Write the axiom in your own words</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="write-section">
+                <h3>Write the SAS Congruence Rule:</h3>
+                <div class="lined-paper"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Worksheet 2: ASA Congruence -->
+    <div class="worksheet page-break">
+        <div class="half-page">
+            <div class="header">
+                <h2>📐 ASA CONGRUENCE RULE (Axiom)</h2>
+                <p>Angle-Side-Angle Congruence Criterion</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="content-box">
+                <h3>Statement:</h3>
+                <p><strong>Two triangles are congruent if two angles and the included side of one triangle are equal to the corresponding two angles and included side of the other triangle.</strong></p>
+            </div>
+            
+            <div class="content-box">
+                <h3>Given:</h3>
+                <p>In △ABC and △PQR: ∠A = ∠P, AB = PQ, ∠B = ∠Q</p>
+            </div>
+            
+            <div class="diagram">
+                <svg width="320" height="100" viewBox="0 0 320 100">
+                    <!-- Triangle ABC -->
+                    <polygon points="30,90 90,15 110,90" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <text x="22" y="102" font-size="13" font-weight="bold">A</text>
+                    <text x="86" y="12" font-size="13" font-weight="bold">B</text>
+                    <text x="112" y="102" font-size="13" font-weight="bold">C</text>
+                    <text x="55" y="45" font-size="11">AB</text>
+                    <path d="M 38,90 A 10,10 0 0,0 38,80" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <path d="M 85,25 A 8,8 0 0,1 80,28" fill="none" stroke="#000" stroke-width="1.5"/>
+                    
+                    <!-- Triangle PQR -->
+                    <polygon points="190,90 250,15 270,90" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <text x="182" y="102" font-size="13" font-weight="bold">P</text>
+                    <text x="246" y="12" font-size="13" font-weight="bold">Q</text>
+                    <text x="272" y="102" font-size="13" font-weight="bold">R</text>
+                    <text x="215" y="45" font-size="11">PQ</text>
+                    <path d="M 198,90 A 10,10 0 0,0 198,80" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <path d="M 245,25 A 8,8 0 0,1 240,28" fill="none" stroke="#000" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="content-box">
+                <h3>To Prove:</h3>
+                <p>△ABC ≅ △PQR</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>Conclusion:</h3>
+                <p>By ASA congruence criterion, △ABC ≅ △PQR</p>
+                <p><strong>Note:</strong> The side must be included between the two angles.</p>
+            </div>
+        </div>
+        
+        <div class="half-page">
+            <div class="header">
+                <h2>✍️ RE-WRITE: ASA Congruence Rule</h2>
+                <p>Write the axiom in your own words</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="write-section">
+                <h3>Write the ASA Congruence Rule:</h3>
+                <div class="lined-paper"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Worksheet 3: Isosceles Triangle Theorem -->
+    <div class="worksheet page-break">
+        <div class="half-page">
+            <div class="header">
+                <h2>📐 ISOSCELES TRIANGLE THEOREM</h2>
+                <p>Angles opposite to equal sides are equal</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="content-box">
+                <h3>Statement:</h3>
+                <p><strong>If two sides of a triangle are equal, then the angles opposite to the equal sides are also equal.</strong></p>
+            </div>
+            
+            <div class="content-box">
+                <h3>Given:</h3>
+                <p>△ABC where AB = AC</p>
+                <h3 style="margin-top: 5px;">To Prove:</h3>
+                <p>∠B = ∠C</p>
+            </div>
+            
+            <div class="diagram">
+                <svg width="180" height="110" viewBox="0 0 180 110">
+                    <polygon points="90,10 45,100 135,100" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <text x="86" y="8" font-size="13" font-weight="bold">A</text>
+                    <text x="35" y="113" font-size="13" font-weight="bold">B</text>
+                    <text x="138" y="113" font-size="13" font-weight="bold">C</text>
+                    <text x="58" y="50" font-size="11" font-weight="bold">AB</text>
+                    <text x="108" y="50" font-size="11" font-weight="bold">AC</text>
+                    <text x="85" y="113" font-size="11">BC</text>
+                    <!-- Equal marks -->
+                    <line x1="65" y1="48" x2="70" y2="54" stroke="#000" stroke-width="2"/>
+                    <line x1="110" y1="54" x2="115" y2="48" stroke="#000" stroke-width="2"/>
+                    <!-- Angle marks -->
+                    <path d="M 52,95 A 9,9 0 0,0 57,91" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <path d="M 128,95 A 9,9 0 0,1 123,91" fill="none" stroke="#000" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="content-box">
+                <h3>Proof:</h3>
+                <p><strong>Step 1:</strong> Draw AD ⊥ BC (perpendicular from A to BC)</p>
+                <p><strong>Step 2:</strong> In △ABD and △ACD:</p>
+                <ul>
+                    <li>AB = AC (Given)</li>
+                    <li>∠ADB = ∠ADC = 90° (AD ⊥ BC)</li>
+                    <li>AD = AD (Common)</li>
+                </ul>
+                <p><strong>Step 3:</strong> △ABD ≅ △ACD (By RHS)</p>
+                <p><strong>Step 4:</strong> ∠B = ∠C (CPCT)</p>
+            </div>
+        </div>
+        
+        <div class="half-page">
+            <div class="header">
+                <h2>✍️ RE-WRITE: Isosceles Triangle Theorem</h2>
+                <p>Write the theorem in your own words</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="field">Name: <span class="underline"></span></div>
+                <div class="field">Class: <span class="underline" style="width: 50px;"></span></div>
+                <div class="field">Date: <span class="underline" style="width: 70px;"></span></div>
+            </div>
+            
+            <div class="write-section">
+                <h3>Write the Isosceles Triangle Theorem:</h3>
+                <div class="lined-paper"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
